@@ -1,3 +1,5 @@
+.*.sw?
+
 # Remix compiler artifacts
 **/artifacts/
 **/artifacts/**
