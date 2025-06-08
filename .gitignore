@@ -2,6 +2,7 @@
 .*.sw?
 node_modules/
 cache/
+env.sh
 
 # Remix compiler artifacts
 **/artifacts/
