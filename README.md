@@ -83,8 +83,26 @@ These tools help you **write, test, and deploy smart contracts**. They’re most
 | **Hardhat** | Dev Environment | ⭐⭐⭐⭐        | Custom, modern development |
 | **IDE**     | General Editor  | ⭐⭐⭐⭐        | Flexible development setup |
 
+
+## Useful commands
+```
+# Install/uninstall module
+npm install [--save-dev] module_name
+npm uninstall module_name
+
+# Run a script
+npx hardhat run path/to/script
+
+# Publish sepolia smart contract on Etherscan
+npx hardhat verify --network sepolia "0x67f809fbde3fbdf462002e7e933525989d043cff" 'Hello World!'
+```
+
 ## Documentation
 https://ethereum.org/fr/developers/tutorials/hello-world-smart-contract-fullstack/
+but change:
+- georli to sepolia
+- 'hardhat-etherscan' to 'hardhat-verify' (https://www.npmjs.com/package/@nomiclabs/hardhat-etherscan)
+
 https://metamask.io/download
 https://sepolia-faucet.pk910.de/
 https://developer.metamask.io/
