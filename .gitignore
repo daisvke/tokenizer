@@ -1,4 +1,7 @@
+# Temp files
 .*.sw?
+node_modules/
+cache/
 
 # Remix compiler artifacts
 **/artifacts/

@@ -83,3 +83,12 @@ These tools help you **write, test, and deploy smart contracts**. They’re most
 | **Hardhat** | Dev Environment | ⭐⭐⭐⭐        | Custom, modern development |
 | **IDE**     | General Editor  | ⭐⭐⭐⭐        | Flexible development setup |
 
+## Documentation
+https://ethereum.org/fr/developers/tutorials/hello-world-smart-contract-fullstack/
+https://metamask.io/download
+https://sepolia-faucet.pk910.de/
+https://developer.metamask.io/
+ether.js
+https://support.infura.io/building-with-infura/javascript-typescript/infuraprovider-metamaskwalletprovider-react-ethersjs
+https://docs.ethers.org/v5/
+https://sepolia.etherscan.io/address/0x3cd47a0d60075b8d6e387449605a7d016b5ca6bd
