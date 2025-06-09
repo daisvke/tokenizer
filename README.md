@@ -93,9 +93,21 @@ npm uninstall module_name
 # Run a script
 npx hardhat run path/to/script
 
+# Deploy contract on the sepolia testnet
+npx hardhat run ../deployment/deploy.js --network sepolia
+
 # Publish sepolia smart contract on Etherscan
 npx hardhat verify --network sepolia "0x67f809fbde3fbdf462002e7e933525989d043cff" 'Hello World!'
+
+npx hardhat verify --network sepolia DEPLOYED_CONTRACT_ADDRESS INITIAL_SUPPLY
+
 ```
+
+## Notes
+
+ERC-20
+
+An ERC-20 token contract keeps track of fungible tokens: any one token is exactly equal to any other token; no tokens have special rights or behavior associated with them. This makes ERC-20 tokens useful for things like a medium of exchange currency, voting rights, staking, and more.
 
 ## Documentation
 https://ethereum.org/fr/developers/tutorials/hello-world-smart-contract-fullstack/
@@ -111,3 +123,9 @@ https://support.infura.io/building-with-infura/javascript-typescript/infuraprovi
 https://docs.ethers.org/v5/
 https://sepolia.etherscan.io/address/0x3cd47a0d60075b8d6e387449605a7d016b5ca6bd
 https://support.infura.io/building-with-infura/javascript-typescript/infuraprovider-metamaskwalletprovider-react-ethersjs
+https://docs.openzeppelin.com/contracts/5.x/erc20#constructing-an-erc20-token-contract
+https://blockchainblog.substack.com/p/how-to-create-an-erc-20-token-with
+
+* on how cryptocurrencies and blockchains work
+https://github.com/bitcoinbook/bitcoinbook
+https://www.imponderablethings.com/2013/07/how-bitcoin-works-under-hood.html

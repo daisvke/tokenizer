@@ -3,6 +3,7 @@
 node_modules/
 cache/
 env.sh
+.vscode
 
 # Remix compiler artifacts
 **/artifacts/

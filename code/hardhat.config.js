@@ -9,7 +9,7 @@ require("@nomicfoundation/hardhat-verify")
 const { API_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env
 
 module.exports = {
-	solidity: "0.8.28",
+	solidity: "0.8.26",
 	defaultNetwork: "sepolia",
 	networks: {
 		hardhat: {},
