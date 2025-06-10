@@ -105,9 +105,12 @@ npx hardhat verify --network sepolia DEPLOYED_CONTRACT_ADDRESS INITIAL_SUPPLY
 
 ## Notes
 
-ERC-20
+### ERC-20
 
 An ERC-20 token contract keeps track of fungible tokens: any one token is exactly equal to any other token; no tokens have special rights or behavior associated with them. This makes ERC-20 tokens useful for things like a medium of exchange currency, voting rights, staking, and more.
+
+### Token parsing
+have to parse ether sent to the constructor but not the other values like transfert amount
 
 ## Documentation
 https://ethereum.org/fr/developers/tutorials/hello-world-smart-contract-fullstack/
