@@ -112,11 +112,17 @@ An ERC-20 token contract keeps track of fungible tokens: any one token is exactl
 ### Token parsing
 have to parse ether sent to the constructor but not the other values like transfert amount
 
+### Owner Privileges
+The owner has significant control over the contract (e.g., can mint tokens, pause/unpause). If the owner's private key is compromised, an attacker could misuse these privileges. ConSo we have implemented a multi-signature wallet for ownership to enhance security.
+
+
 ## Documentation
 https://ethereum.org/fr/developers/tutorials/hello-world-smart-contract-fullstack/
 but change:
 - georli to sepolia
 - 'hardhat-etherscan' to 'hardhat-verify' (https://www.npmjs.com/package/@nomiclabs/hardhat-etherscan)
+
+https://eips.ethereum.org/EIPS/eip-20#methods
 
 https://metamask.io/download
 https://sepolia-faucet.pk910.de/
