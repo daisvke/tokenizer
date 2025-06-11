@@ -5,11 +5,14 @@ const WALLET_OTHER = process.env.WALLET_ADDRESS_OTHER;
 // Get the initial owner account's supply amount
 const INITIAL_SUPPLY = process.env.INITIAL_SUPPLY
 
+// Global contract objects
+var multiSigWallet, d42Contract;
+
 // Get the wallets
 const owner = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const other = new ethers.Wallet(process.env.PRIVATE_KEY_OTHER, provider);
 
-async function getBalances(d42Contract) {
+async function getBalances() {
 	// Get the balance of the two accounts
 	const balance = await d42Contract.balanceOf(owner.address);
 	const balanceOther = await d42Contract.balanceOf(other.address);
@@ -22,15 +25,11 @@ async function getBalances(d42Contract) {
 	console.log("=======================");
 }
 
-async function executeMultiSigTransaction(d42Contract, multiSigWallet, txName, arg1, arg2, arg3, signer1, signer2) {
+async function executeMultiSigTransaction(txName, args, signer1, signer2) {
 	// Encode the function call
 	const txData = d42Contract.interface.encodeFunctionData(
 		txName,
-		[arg1, arg2, arg3]
-        // arg1 !== undefined && arg2 !== undefined ? [arg1, arg2] : 
-        // arg1 !== undefined ? [arg1] : 
-        // arg2 !== undefined ? [arg2] : 
-        // []
+		args
 	);
 
 	console.log(`Submitting ${txName} transaction from signer1...`);
@@ -68,15 +67,13 @@ async function executeMultiSigTransaction(d42Contract, multiSigWallet, txName, a
 }
 
 // Pause contract to forbid transfers
-async function pauseContract(d42Contract, multiSigWallet, signer1, signer2) {
+async function pauseUnpauseContract(mode, signer1, signer2) {
 	// Check original paused state
 	var pausedState = await d42Contract.isPaused();
 	console.log("Is contract paused?", pausedState);
 
-	console.log("Pausing contract...");
-
 	// Execute the transaction through MultiSig contract (signed by 2 signers)
-	await executeMultiSigTransaction(d42Contract, multiSigWallet, "pause", undefined, undefined, signer1, signer2);
+	await executeMultiSigTransaction(mode, [], signer1, signer2);
 
 	// Check updated paused value
 	pausedState = await d42Contract.isPaused();
@@ -84,12 +81,35 @@ async function pauseContract(d42Contract, multiSigWallet, signer1, signer2) {
 }
 
 // Send tokens from owner to other
-async function transfertToOther(d42Contract, multiSigWallet, amount, signer1, signer2) {
+async function transfertToOther(amount, signer1, signer2) {
+	if (await d42Contract.isPaused())
+		console.log("Contract is paused! Aborting...");
+
 	// Transfer tokens to 'Other'
 	console.log(`Sending ${amount} tokens to address: ${other.address}...`);
 
 	// Execute the transaction through MultiSig contract (signed by 2 signers)
-	await executeMultiSigTransaction(d42Contract, multiSigWallet, "multisigTransfer", owner.address, other.address, ethers.utils.parseEther(amount), signer1, signer2);
+	await executeMultiSigTransaction(
+		"multisigTransfer",
+		[owner.address, other.address, ethers.utils.parseEther(amount)],
+		signer1, signer2
+	);
+
+	// Check updated balance of owner
+	await getBalances(d42Contract);
+}
+
+// Send tokens from owner to other
+async function transfert(from, to, amount, signer1, signer2) {
+	// Transfer tokens to 'Other'
+	console.log(`Sending ${amount} tokens to address: ${other.address}...`);
+
+	// Execute the transaction through MultiSig contract (signed by 2 signers)
+	await executeMultiSigTransaction(
+		"multisigTransfer",
+		[from.address, to.address, ethers.utils.parseEther(amount)],
+		signer1, signer2
+	);
 
 	// Check updated balance of owner
 	await getBalances(d42Contract);
@@ -103,11 +123,13 @@ async function deployMultiSigWallet(signer1, signer2) {
 		2 // 2 of 2 required approvals
 	);
 	await multisig.deployed();
+
 	console.log(`\n✅ MultiSigWallet deployed to: ${multisig.address}`);
+
 	return multisig;
 }
 
-async function deployD42(multiSigWallet) {
+async function deployD42() {
 	// Get the contract factory object of our smart contract
 	const D42CFObj = await ethers.getContractFactory("d42", owner);
 	// Deploy the contract with MultiSigWallet on the testnet
@@ -145,11 +167,11 @@ async function displayWalletInfo() {
 
 async function main() {
 	try {
-		displayWalletInfo();
+		await displayWalletInfo();
 
 		// Deploy the MultiSigWallet to sign the transaction on d42
-		const multiSigWallet = await deployMultiSigWallet(owner, other);
-		const d42Contract = await deployD42(multiSigWallet);
+		multiSigWallet = await deployMultiSigWallet(owner, other);
+		d42Contract = await deployD42();
 
 		// Get initial balances of the two signers
 		await getBalances(d42Contract);
@@ -161,22 +183,30 @@ async function main() {
 		// const d42FromOther = d42Contract.connect(other);
 		// await d42FromOther.mint(other.address, ethers.utils.parseEther("100"));
 
+
 		/*
-		 * Pause contract to forbid transfers
+		 * Pause contract to forbid transfers (will make further transactions fail!)
 		 */
 
-		// await pauseContract(d42Contract, multiSigWallet, owner, other);
+		// await pauseUnpauseContract("pause", owner, other);
+		// await pauseUnpauseContract("unpause", owner, other);
 
 		/*
 		 * Send tokens from owner to other
 		 */
 
-		await transfertToOther(d42Contract, multiSigWallet, "10", owner, other);
+		await transfertToOther("10", owner, other);
+
+		/*
+		 * Send tokens from other to owner
+		 */
+
+		// await transfert(other, owner, "5", owner, other);
 	}
 	catch (err)
 	{
-		console.error("Operation failed, as expected.");
-		// console.error(err.message);
+		// console.error("Operation failed, as expected.");
+		console.error(err.message);
 	}
 }
 

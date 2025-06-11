@@ -14,6 +14,9 @@ interface IMultiSig {
 contract d42 is ERC20, Ownable, Pausable {
     address public  multisig;
 
+    event Minted(address indexed to, uint256 amount);
+    event MultisigTransfer(address indexed sender, address indexed recipient, uint256 amount);
+
     modifier onlyMultisig() {
         require(msg.sender == multisig, "Caller is not multisig");
         _;
@@ -29,6 +32,7 @@ contract d42 is ERC20, Ownable, Pausable {
 
     function mint(address to, uint256 amount) public onlyMultisig {
         _mint(to, amount);
+        emit Minted(to, amount);
     }
 
     function isPaused() public view returns (bool) {
@@ -40,6 +44,7 @@ contract d42 is ERC20, Ownable, Pausable {
      */
     function pause() public onlyMultisig {
         Pausable._pause();
+        emit Paused(msg.sender);
     }
 
     /**
@@ -47,19 +52,28 @@ contract d42 is ERC20, Ownable, Pausable {
      */
     function unpause() public onlyMultisig {
         Pausable._unpause();
+        emit Unpaused(msg.sender);
     }
 
-    function multisigTransfer(address from, address to, uint256 amount) public onlyMultisig whenNotPaused {
-        _transfer(from, to, amount);
+    // Override the transfer function to include the whenNotPaused modifier
+    function transfer(address recipient, uint256 amount)
+        public onlyOwner override whenNotPaused returns (bool)
+    {
+        return super.transfer(recipient, amount);
     }
 
-    // // Override the transfer function to include the whenNotPaused modifier
-    // function transfer(address recipient, uint256 amount) public onlyMultisig override whenNotPaused returns (bool) {
-    //     return super.transfer(recipient, amount);
-    // }
+    function multisigTransfer(address sender, address recipient, uint256 amount)
+        public onlyMultisig whenNotPaused
+    {
+        require(balanceOf(sender) >= amount, "Insufficient balance");
+        _transfer(sender, recipient, amount);
+        emit MultisigTransfer(sender, recipient, amount);
+    }
 
     // Override the transferFrom function to include the whenNotPaused modifier
-    function transferFrom(address sender, address recipient, uint256 amount) public onlyMultisig override whenNotPaused returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount)
+        public onlyOwner override whenNotPaused returns (bool)
+    {
         return super.transferFrom(sender, recipient, amount);
     }
 
