@@ -15,7 +15,7 @@ contract d42 is ERC20, Ownable, Pausable {
     address public  multisig;
 
     modifier onlyMultisig() {
-        require(IMultiSig(multisig).isApproved(msg.sender), "Not approved by multisig");
+        require(msg.sender == multisig, "Caller is not multisig");
         _;
     }
 

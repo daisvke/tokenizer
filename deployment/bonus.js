@@ -9,13 +9,10 @@ const INITIAL_SUPPLY = process.env.INITIAL_SUPPLY
 const owner = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const other = new ethers.Wallet(process.env.PRIVATE_KEY_OTHER, provider);
 
-console.log("├── Owner's wallet address:", owner.address);
-console.log("└── Other's wallet address:", other.address);
-
 async function getBalances(d42Contract) {
 	// Get the balance of the two accounts
 	const balance = await d42Contract.balanceOf(owner.address);
-	const balanceOther = await d42Contract.balanceOf(WALLET_OTHER);
+	const balanceOther = await d42Contract.balanceOf(other.address);
 	// Get the number of decimals from the token contract
 	const decimals = await d42Contract.decimals();
 	// Convert the wei values to tokens and print
@@ -26,7 +23,7 @@ async function getBalances(d42Contract) {
 }
 
 // Pause contract to forbid transfers
-async function pauseContract(d42Contract, MultiSigWallet, signer1, signer2) {
+async function pauseContract(d42Contract, multiSigWallet, signer1, signer2) {
 	// Check original paused state
 	var pausedState = await d42Contract.isPaused();
 	console.log("Is contract paused?", pausedState);
@@ -41,33 +38,32 @@ async function pauseContract(d42Contract, MultiSigWallet, signer1, signer2) {
 	console.log("Submitting pause transaction from signer1...");
 
 	// Submit transaction from signer1
-	const tx = await MultiSigWallet
+	const tx = await multiSigWallet
 					.connect(signer1)
 					.submitTransaction(d42Contract.address, 0, pauseTxData);
 	await tx.wait();
 
-	var txIndex = (await MultiSigWallet.getTransactionCount()) - 1;
+	// Get transaction index (last added transaction)
+	const txIndex = (await multiSigWallet.getTransactionCount()) - 1;
 	console.log("Transaction index:", txIndex);
 
-	// Get transaction index (last added transaction)
-	txIndex = (await MultiSigWallet.getTransactionCount()) - 1;
-
 	// Check approvals count after the approval
-	approvals = await MultiSigWallet.getTransactionApprovals(txIndex);
+	approvals = await multiSigWallet.getTransactionApprovals(txIndex);
 	console.log("Approvals for transaction:", approvals);
 	
-	console.log("Signer2 is owner:", await MultiSigWallet.isOwner(signer2.address));
+	console.log("Signer2 is owner:", await multiSigWallet.isOwner(signer2.address));
 	console.log("Approving transaction from signer2...");
-	await MultiSigWallet.connect(signer2).approveTransaction(txIndex);
+	const approveTx = await multiSigWallet.connect(signer2).approveTransaction(txIndex);
+	await approveTx.wait();
 
 	// Check approvals count after the approvals
-	approvals = await MultiSigWallet.getTransactionApprovals(txIndex);
+	approvals = await multiSigWallet.getTransactionApprovals(txIndex);
 	console.log("Approvals for transaction:", approvals);
 
 	console.log("Executing transaction...");
 
 	// Execute transaction from signer1
-	const execTx = await MultiSigWallet.connect(signer1).executeTransaction(txIndex);
+	const execTx = await multiSigWallet.connect(signer1).executeTransaction(txIndex);
 	await execTx.wait();
 
 	console.log("\n✅ Pause transaction executed via multisig!\n");
@@ -83,10 +79,10 @@ async function transfertToOther(d42Contract, multiSigWallet, amount) {
 	await getBalances(d42Contract);
 
 	// Transfer tokens to 'Other'
-	console.log(`Sending ${amount} tokens to address: ${WALLET_OTHER}...`);
+	console.log(`Sending ${amount} tokens to address: ${other.address}...`);
 
 	// Convert the transfered amount in wei
-	const transferTx = await d42Contract.transfer(WALLET_OTHER, ethers.utils.parseEther(amount));
+	const transferTx = await d42Contract.transfer(other.address, ethers.utils.parseEther(amount));
 	await transferTx.wait();
 
 	console.log("\n✅ Transfer successful!\n");
@@ -124,11 +120,28 @@ async function deployD42(multiSigWallet) {
 	return d42Contract;
 }
 
+async function displayWalletInfo() {
+	// Get the balance of the wallet
+	const balance = await owner.getBalance();
+	// Format the balance to Ether
+	const formattedBalance = ethers.utils.formatEther(balance);
+
+	console.log("├── Owner's wallet address:", owner.address);
+	console.log(`|	└── Owner's Wallet Balance: ${formattedBalance} ETH`);
+	console.log("└── Other's wallet address:", other.address);
+	console.log(`	└── Owner's Wallet Balance: ${formattedBalance} ETH`);
+}
+
 async function main() {
 	try {
+		displayWalletInfo();
+
 		// Deploy the MultiSigWallet to sign the transaction on d42
 		const multiSigWallet = await deployMultiSigWallet(owner, other);
 		const d42Contract = await deployD42(multiSigWallet);
+
+		// Get initial balances of the two signers
+		await getBalances(d42Contract);
 
 		/*
 		 * Connection test with Other (not supposed to succeed)

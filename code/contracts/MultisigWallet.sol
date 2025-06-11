@@ -13,6 +13,17 @@ contract MultiSigWallet {
         uint    approvals;
     }
 
+    // Events are a way to log information on the blockchain
+    event SubmitTransaction(
+        address indexed owner,
+        uint indexed txIndex,
+        address indexed to,
+        uint value,
+        bytes data
+    );
+    event ApproveTransaction(address indexed owner, uint indexed txIndex);
+    event ExecuteTransaction(address indexed owner, uint indexed txIndex);
+
     mapping(address => bool) public isOwner;
     Transaction[] public transactions;
     mapping(uint => mapping(address => bool)) public approved;
@@ -37,6 +48,8 @@ contract MultiSigWallet {
         uint txIndex = transactions.length - 1;
         approved[txIndex][msg.sender] = true;
         transactions[txIndex].approvals += 1;
+
+        emit SubmitTransaction(msg.sender, txIndex, to, value, data);
     }
 
     function approveTransaction(uint txIndex) public onlyOwner {
@@ -45,23 +58,27 @@ contract MultiSigWallet {
 
         approved[txIndex][msg.sender] = true;
         transactions[txIndex].approvals += 1;
+
+        emit ApproveTransaction(msg.sender, txIndex);
     }
 
     function executeTransaction(uint txIndex) public onlyOwner {
         Transaction storage txn = transactions[txIndex];
-        require(!txn.executed, "Already executed");
-        require(txn.approvals >= requiredApprovals, "Not enough approvals");
+        require(!transactions[txIndex].executed, "Already executed");
+        require(transactions[txIndex].approvals >= requiredApprovals, "Not enough approvals");
 
         txn.executed = true;
         (bool success, ) = txn.to.call{value: txn.value}(txn.data);
         require(success, "Transaction failed");
+
+        emit ExecuteTransaction(msg.sender, txIndex);
     }
 
     function getTransactionCount() public view returns (uint) {
         return transactions.length;
     }
 
-   function getTransactionApprovals(uint txIndex) public view returns (uint) {
+    function getTransactionApprovals(uint txIndex) public view returns (uint) {
         return transactions[txIndex].approvals;
     }
 }
