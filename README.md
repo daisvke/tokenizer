@@ -91,6 +91,7 @@ npm install [--save-dev] module_name
 npm uninstall module_name
 
 # Run a script
+# Any contracts deployed to this local network will not persist across sessions
 npx hardhat run path/to/script
 
 # Deploy contract on the sepolia testnet

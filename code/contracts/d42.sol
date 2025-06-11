@@ -49,10 +49,14 @@ contract d42 is ERC20, Ownable, Pausable {
         Pausable._unpause();
     }
 
-    // Override the transfer function to include the whenNotPaused modifier
-    function transfer(address recipient, uint256 amount) public onlyMultisig override whenNotPaused returns (bool) {
-        return super.transfer(recipient, amount);
+    function multisigTransfer(address from, address to, uint256 amount) public onlyMultisig whenNotPaused {
+        _transfer(from, to, amount);
     }
+
+    // // Override the transfer function to include the whenNotPaused modifier
+    // function transfer(address recipient, uint256 amount) public onlyMultisig override whenNotPaused returns (bool) {
+    //     return super.transfer(recipient, amount);
+    // }
 
     // Override the transferFrom function to include the whenNotPaused modifier
     function transferFrom(address sender, address recipient, uint256 amount) public onlyMultisig override whenNotPaused returns (bool) {
