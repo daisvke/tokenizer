@@ -2,24 +2,24 @@
 pragma solidity ^0.8.26;
 
 contract MultiSigWallet {
-    address[] public owners;
-    uint public requiredApprovals;
+    address[] public    owners;
+    uint public         requiredApprovals;
 
     struct Transaction {
         address to;
-        uint value;
-        bytes data;
-        bool executed;
-        uint approvals;
+        uint    value;
+        bytes   data;
+        bool    executed;
+        uint    approvals;
     }
 
     // Events are a way to log information on the blockchain
     event SubmitTransaction(
         address indexed owner,
-        uint indexed txIndex,
+        uint indexed    txIndex,
         address indexed to,
-        uint value,
-        bytes data
+        uint            value,
+        bytes           data
     );
     event ApproveTransaction(address indexed owner, uint indexed txIndex);
     event RevokeApproval(address indexed owner, uint256 indexed txIndex);
@@ -64,9 +64,9 @@ contract MultiSigWallet {
 
     // Add the transaction and auto-sign it
     function submitTransaction(
-        address to,
-        uint value,
-        bytes memory data
+        address         to,
+        uint            value,
+        bytes memory    data
     ) public onlyOwner {
         transactions.push(Transaction(to, value, data, false, 0));
         uint txIndex = transactions.length - 1;
@@ -79,7 +79,6 @@ contract MultiSigWallet {
     function approveTransaction(uint txIndex)
         public onlyOwner txExists(txIndex) notExecuted(txIndex) notApproved(txIndex)
     {
-        require(txIndex < transactions.length, "Transaction does not exist");
         require(!approved[txIndex][msg.sender], "Already approved");
 
         approved[txIndex][msg.sender] = true;
@@ -132,11 +131,11 @@ contract MultiSigWallet {
         txExists(txIndex)
         view
         returns (
-            address to,
-            uint value,
-            bytes memory data,
-            bool executed,
-            uint approvals
+            address         to,
+            uint            value,
+            bytes memory    data,
+            bool            executed,
+            uint            approvals
         )
     {
         Transaction storage transaction = transactions[txIndex];
