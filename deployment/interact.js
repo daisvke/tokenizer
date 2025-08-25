@@ -1,4 +1,14 @@
-// Get the provider that gives access to the testnet blockchain
+/*
+ * TESTS FOR THE D42 MULTISIGWALLET CONTRACT
+ */
+
+/*
+ * Get the provider that gives access to the testnet blockchain.
+ *
+ * RPC stands for Remote Procedure Call. It is a protocol that allows a program
+ * 	to execute code on a remote server as if it were a local procedure call.
+ */
+
 const provider = new ethers.providers.JsonRpcProvider(process.env.API_URL);
 // The address we want to send tokens to
 const WALLET_OTHER = process.env.WALLET_ADDRESS_OTHER;
@@ -18,7 +28,7 @@ async function getBalances() {
 	const balanceOther = await d42Contract.balanceOf(other.address);
 	// Get the number of decimals from the token contract
 	const decimals = await d42Contract.decimals();
-	// Convert the wei values to tokens and print
+	// Convert the wei values to tokens and print (1 ether = 10^18 wei)
 	console.log("=======================");
 	console.log("Owner balance:", ethers.utils.formatUnits(balance, decimals));
 	console.log("Other balance:", ethers.utils.formatUnits(balanceOther, decimals));
@@ -82,8 +92,10 @@ async function pauseUnpauseContract(mode, signer1, signer2) {
 
 // Send tokens from owner to other
 async function transfertToOther(amount, signer1, signer2) {
-	if (await d42Contract.isPaused())
+	if (await d42Contract.isPaused()) {
 		console.log("Contract is paused! Aborting...");
+		return;
+	}
 
 	// Transfer tokens to 'Other'
 	console.log(`Sending ${amount} tokens to address: ${other.address}...`);
@@ -99,50 +111,50 @@ async function transfertToOther(amount, signer1, signer2) {
 	await getBalances(d42Contract);
 }
 
-// Send tokens from owner to other
-async function transfert(from, to, amount, signer1, signer2) {
-	// Transfer tokens to 'Other'
-	console.log(`Sending ${amount} tokens to address: ${other.address}...`);
-
-	// Execute the transaction through MultiSig contract (signed by 2 signers)
-	await executeMultiSigTransaction(
-		"multisigTransfer",
-		[from.address, to.address, ethers.utils.parseEther(amount)],
-		signer1, signer2
-	);
-
-	// Check updated balance of owner
-	await getBalances(d42Contract);
-}
-
 // Deploy the MultiSigWallet (transaction on d42 have to be signed by signer1 + signer2)
 async function deployMultiSigWallet(signer1, signer2) {
+    /* Get the contract factory for the MultiSigWallet contract
+	 * The primary purpose of a contract factory is to deploy new instances of a smart contract. 
+	 */
 	const MultiSigWallet = await ethers.getContractFactory("MultiSigWallet");
+    
+    /* Deploy the MultiSigWallet contract with the addresses of signer1 and signer2.
+	 * This creates a new instance of the contract on the blockchain.
+	 */
 	const multisig = await MultiSigWallet.deploy(
-		[signer1.address, signer2.address],
+		[signer1.address, signer2.address], // Array of owner addresses
 		2 // 2 of 2 required approvals
 	);
+    
+    // Wait until the contract is deployed on the blockchain
 	await multisig.deployed();
 
+    // Log the address of the deployed MultiSigWallet contract to the console
 	console.log(`\n✅ MultiSigWallet deployed to: ${multisig.address}`);
 
+    // Return the deployed contract instance for further interaction
 	return multisig;
 }
 
 async function deployD42() {
-	// Get the contract factory object of our smart contract
+	// Get the contract factory object of our smart contract named "d42"
 	const D42CFObj = await ethers.getContractFactory("d42", owner);
-	// Deploy the contract with MultiSigWallet on the testnet
+	
 	const d42Contract = await D42CFObj.deploy(INITIAL_SUPPLY, multiSigWallet.address);
-	// Make sure to wait until it is deployed
+	
+	// Wait until the contract is fully deployed on the blockchain
 	await d42Contract.deployed();
 
+	// Retrieve the name of the token from the deployed contract
 	const name = await d42Contract.name();
+	
+	// Retrieve the symbol of the token from the deployed contract
 	const symbol = await d42Contract.symbol();
 
 	console.log(`\n✅ Contract deployed to address: ${d42Contract.address}\n`);
 	console.log(`Token name: ${name} | Symbol: ${symbol}`);
 
+	// Return the deployed contract instance for further interactions
 	return d42Contract;
 }
 
@@ -188,7 +200,7 @@ async function main() {
 		 * Pause contract to forbid transfers (will make further transactions fail!)
 		 */
 
-		// await pauseUnpauseContract("pause", owner, other);
+		await pauseUnpauseContract("pause", owner, other);
 		// await pauseUnpauseContract("unpause", owner, other);
 
 		/*
@@ -196,16 +208,9 @@ async function main() {
 		 */
 
 		await transfertToOther("10", owner, other);
-
-		/*
-		 * Send tokens from other to owner
-		 */
-
-		// await transfert(other, owner, "5", owner, other);
 	}
 	catch (err)
 	{
-		// console.error("Operation failed, as expected.");
 		console.error(err.message);
 	}
 }
