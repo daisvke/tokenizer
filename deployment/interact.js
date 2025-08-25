@@ -178,41 +178,34 @@ async function displayWalletInfo() {
 }
 
 async function main() {
-	try {
-		await displayWalletInfo();
+	await displayWalletInfo();
 
-		// Deploy the MultiSigWallet to sign the transaction on d42
-		multiSigWallet = await deployMultiSigWallet(owner, other);
-		d42Contract = await deployD42();
+	// Deploy the MultiSigWallet to sign the transaction on d42
+	multiSigWallet = await deployMultiSigWallet(owner, other);
+	d42Contract = await deployD42();
 
-		// Get initial balances of the two signers
-		await getBalances(d42Contract);
+	// Get initial balances of the two signers
+	await getBalances(d42Contract);
 
-		/*
-		 * Connection test with Other (not supposed to succeed)
-		 */
+	/*
+	 * Connection test with Other (not supposed to succeed)
+	 */
 
-		// const d42FromOther = d42Contract.connect(other);
-		// await d42FromOther.mint(other.address, ethers.utils.parseEther("100"));
+	// const d42FromOther = d42Contract.connect(other);
+	// await d42FromOther.mint(other.address, ethers.utils.parseEther("100"));
 
 
-		/*
-		 * Pause contract to forbid transfers (will make further transactions fail!)
-		 */
+	/*
+	 * Pause contract to forbid transfers (will make further transactions fail!)
+	 */
+	// await pauseUnpauseContract("pause", owner, other);
+	// await pauseUnpauseContract("unpause", owner, other);
 
-		await pauseUnpauseContract("pause", owner, other);
-		// await pauseUnpauseContract("unpause", owner, other);
+	/*
+	 * Send tokens from owner to other
+	 */
 
-		/*
-		 * Send tokens from owner to other
-		 */
-
-		await transfertToOther("10", owner, other);
-	}
-	catch (err)
-	{
-		console.error(err.message);
-	}
+	await transfertToOther("10", owner, other);
 }
 
 main()
