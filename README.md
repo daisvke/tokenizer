@@ -71,12 +71,11 @@ npx hardhat run path/to/script
 npx hardhat run ../deployment/deploy.js --network sepolia
 
 # Publish sepolia smart contract on Etherscan
+# The verify plugin helps verifying the source code for the contracts.
+# At the moment, it supports Etherscan, explorers compatible with its API like Blockscout and Sourcify.
 npx hardhat verify --network sepolia "0x67f809fbde3fbdf462002e7e933525989d043cff" 'Hello World!'
 
-npx hardhat verify --network sepolia DEPLOYED_CONTRACT_ADDRESS INITIAL_SUPPLY
-
-# Run tests on the testnet
-cd code/
+# Run tests with the contract on the testnet
 npx hardhat run ../deployment/interact.js
 
 ```
