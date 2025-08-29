@@ -5,16 +5,10 @@ This project is designed to operate exclusively on a testnet, utilizing **Hardha
 
 ## Technology Choices
 
-### Advantages of Choosing Ethereum
-
-Ethereum is a leading blockchain platform known for its established ecosystem, smart contract functionality, and strong security. It provides a robust environment for developers, especially those new to blockchain technology.
-
-1. **Established Ecosystem**: Ethereum has a mature infrastructure and a large developer community, offering extensive resources and support.
-2. **Smart Contract Functionality**: It uses Solidity, a Turing-complete language, allowing for complex and flexible smart contracts.
-3. **Strong Security**: A large network of nodes enhances security, making it resilient against attacks.
-4. **Interoperability**: ERC standards ensure easy interaction between tokens and decentralized applications (dApps).
-5. **Access to DeFi and NFT Markets**: Ethereum is the primary platform for decentralized finance and non-fungible tokens.
-6. **Testnet Availability**: Multiple testnets, including Sepolia, allow developers to test applications without financial risk.
+### Using Sepolia Test Network
+- **Realistic Testing Environment**: Sepolia mimics the Ethereum mainnet, enabling realistic testing of smart contracts.
+- **Etherum mining**: We used <a href="https://sepolia-faucet.pk910.de/">this Sepolia faucet.</a>
+It's an easy way to get Sepolia tokens without having to create an account etc.
 
 ### ERC20 Token Standard
 
@@ -28,12 +22,6 @@ Ethereum is a leading blockchain platform known for its established ecosystem, s
 - **Built-in Tools**: It includes features like Solidity debugging and testing frameworks.
 - **Community Support**: Hardhat has a strong community and extensive documentation.
 
-### Using Sepolia Test Network
-- **Free Test Ether**: The Sepolia faucet provides free test Ether for experimentation.
-- **Realistic Testing Environment**: Sepolia mimics the Ethereum mainnet, enabling realistic testing of smart contracts.
-- **Etherum mining**: We used <a href="https://sepolia-faucet.pk910.de/">this Sepolia faucet.</a>
-It's an easy way to get Sepolia tokens without having to create an account etc.
-
 
 ## Useful commands
 ```bash
@@ -44,14 +32,8 @@ cd code/
 npm install [--save-dev] module_name
 npm uninstall module_name
 
-# Run a script
-# Any contracts deployed to this local network will not persist across sessions
-npx hardhat run path/to/script
-
 # Publish sepolia smart contract on Etherscan.
-# The verify plugin helps verifying the source code for the contracts.
-# At the moment, it supports Etherscan, explorers compatible with its API like Blockscout and Sourcify.
-npx hardhat verify --network sepolia "0x67f809fbde3fbdf462002e7e933525989d043cff" 'Hello World!'
+npx hardhat verify --network sepolia <CONTRACT_ADDRESS> 'Hello World!'
 
 # Deploy the contract on the testnet
 npx hardhat run ../deployment/deploy.js
