@@ -28,7 +28,6 @@ Ethereum is a leading blockchain platform known for its established ecosystem, s
 - **Built-in Tools**: It includes features like Solidity debugging and testing frameworks.
 - **Community Support**: Hardhat has a strong community and extensive documentation.
 
-
 ### Using Sepolia Test Network
 - **Free Test Ether**: The Sepolia faucet provides free test Ether for experimentation.
 - **Realistic Testing Environment**: Sepolia mimics the Ethereum mainnet, enabling realistic testing of smart contracts.
@@ -59,6 +58,9 @@ npx hardhat run ../deployment/deploy.js
 
 # Run tests with the contract on the testnet
 npx hardhat run ../deployment/interact.js
+
+# Wallet information can be accessed from
+https://sepolia.etherscan.io/token/<WALLET_ADDRESS>
 
 ```
 
