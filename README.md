@@ -28,30 +28,12 @@ Ethereum is a leading blockchain platform known for its established ecosystem, s
 - **Built-in Tools**: It includes features like Solidity debugging and testing frameworks.
 - **Community Support**: Hardhat has a strong community and extensive documentation.
 
-## Ethereum Mining
 
-We used <a href="https://sepolia-faucet.pk910.de/">this Sepolia faucet.</a>
-
-- **Understanding Blockchain Mechanics**: Mining helps you understand how transactions are validated and added to the blockchain.
-- **Test Network Mining**: On test networks like Sepolia, mining can be done without financial risk.
-
-## Using Sepolia Test Network
-
-### Benefits of Sepolia
+### Using Sepolia Test Network
 - **Free Test Ether**: The Sepolia faucet provides free test Ether for experimentation.
 - **Realistic Testing Environment**: Sepolia mimics the Ethereum mainnet, enabling realistic testing of smart contracts.
-
-## Summary Table of Advantages
-
-| Component                | Advantages                                                                 |
-|--------------------------|----------------------------------------------------------------------------|
-| **ERC20**                | Widely adopted, interoperable, and simple to implement.                    |
-| **Ether**                | Native currency for transaction fees and access to Ethereum features.      |
-| **Hardhat**              | Local development, built-in tools, and strong community support.           |
-| **Mining**               | Understanding blockchain mechanics and risk-free experimentation.          |
-| **Sepolia**              | Free test Ether and a realistic testing environment.                       |
-
-By combining these elements, a beginner can effectively learn about smart contract development, gain practical experience, and build a solid foundation for future projects.
+- **Etherum mining**: We used <a href="https://sepolia-faucet.pk910.de/">this Sepolia faucet.</a>
+It's an easy way to get Sepolia tokens without having to create an account etc.
 
 
 ## Useful commands
@@ -72,23 +54,13 @@ npx hardhat run path/to/script
 # At the moment, it supports Etherscan, explorers compatible with its API like Blockscout and Sourcify.
 npx hardhat verify --network sepolia "0x67f809fbde3fbdf462002e7e933525989d043cff" 'Hello World!'
 
+# Deploy the contract on the testnet
+npx hardhat run ../deployment/deploy.js
+
 # Run tests with the contract on the testnet
 npx hardhat run ../deployment/interact.js
 
 ```
-
-
-## Notes
-
-### ERC-20
-
-An ERC-20 token contract keeps track of fungible tokens: any one token is exactly equal to any other token; no tokens have special rights or behavior associated with them. This makes ERC-20 tokens useful for things like a medium of exchange currency, voting rights, staking, and more.
-
-### Token parsing
-have to parse ether sent to the constructor but not the other values like transfert amount
-
-### Owner Privileges
-The owner has significant control over the contract (e.g., can mint tokens, pause/unpause). If the owner's private key is compromised, an attacker could misuse these privileges. ConSo we have implemented a multi-signature wallet for ownership to enhance security.
 
 
 ## Documentation
