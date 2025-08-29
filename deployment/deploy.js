@@ -102,7 +102,7 @@ async function main() {
 
 	// Deploy the MultiSigWallet to sign the transaction on d42
 	multiSigWallet = await deployMultiSigContract(owner, other);
-	// Deploy
+	// Deploy the d42 contract on the testnet
 	d42Contract = await deployD42Contract();
 
 	// Get initial balances of the two signers
