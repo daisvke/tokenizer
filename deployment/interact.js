@@ -10,10 +10,10 @@
  */
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.API_URL);
-// The address we want to send tokens to
-const WALLET_OTHER = process.env.WALLET_ADDRESS_OTHER;
 // Get the initial owner account's supply amount
 const INITIAL_SUPPLY = process.env.INITIAL_SUPPLY
+const MULTISIG_ADDRESS = process.env.MULTISIG_ADDRESS
+const D42_ADDRESS = process.env.D42_ADDRESS
 
 // Global contract objects
 var multiSigWallet, d42Contract;
@@ -111,51 +111,20 @@ async function transfertToOther(amount, signer1, signer2) {
 	await getBalances(d42Contract);
 }
 
-// Deploy the MultiSigWallet (transaction on d42 have to be signed by signer1 + signer2)
-async function deployMultiSigWallet(signer1, signer2) {
-    /* Get the contract factory for the MultiSigWallet contract
-	 * The primary purpose of a contract factory is to deploy new instances of a smart contract. 
-	 */
-	const MultiSigWallet = await ethers.getContractFactory("MultiSigWallet");
+async function getDeployedMultisigContract() {
+    // Get the contract factory for the MultiSigWallet
+    const MultiSigWallet = await ethers.getContractFactory("MultiSigWallet");
     
-    /* Deploy the MultiSigWallet contract with the addresses of signer1 and signer2.
-	 * This creates a new instance of the contract on the blockchain.
-	 */
-	const multisig = await MultiSigWallet.deploy(
-		[signer1.address, signer2.address], // Array of owner addresses
-		2 // 2 of 2 required approvals
-	);
-    
-    // Wait until the contract is deployed on the blockchain
-	await multisig.deployed();
-
-    // Log the address of the deployed MultiSigWallet contract to the console
-	console.log(`\n✅ MultiSigWallet deployed to: ${multisig.address}`);
-
-    // Return the deployed contract instance for further interaction
-	return multisig;
+    // Attach to the deployed contract
+    multiSigWallet = await MultiSigWallet.attach(MULTISIG_ADDRESS);
 }
 
-async function deployD42() {
-	// Get the contract factory object of our smart contract named "d42"
-	const D42CFObj = await ethers.getContractFactory("d42", owner);
-	
-	const d42Contract = await D42CFObj.deploy(INITIAL_SUPPLY, multiSigWallet.address);
-	
-	// Wait until the contract is fully deployed on the blockchain
-	await d42Contract.deployed();
-
-	// Retrieve the name of the token from the deployed contract
-	const name = await d42Contract.name();
-	
-	// Retrieve the symbol of the token from the deployed contract
-	const symbol = await d42Contract.symbol();
-
-	console.log(`\n✅ Contract deployed to address: ${d42Contract.address}\n`);
-	console.log(`Token name: ${name} | Symbol: ${symbol}`);
-
-	// Return the deployed contract instance for further interactions
-	return d42Contract;
+async function getDeployedD42Contract() {
+    // Get the contract factory for the MultiSigWallet
+    const D42Contract = await ethers.getContractFactory("d42", owner);
+    
+    // Attach to the deployed contract
+    d42Contract = await D42Contract.attach(D42_ADDRESS);
 }
 
 async function displayWalletInfo() {
@@ -181,11 +150,13 @@ async function main() {
 	await displayWalletInfo();
 
 	// Deploy the MultiSigWallet to sign the transaction on d42
-	multiSigWallet = await deployMultiSigWallet(owner, other);
-	d42Contract = await deployD42();
+	await getDeployedMultisigContract(owner, other);
+	// Deploy
+	// d42Contract = await deployD42(MULTISIG_ADDRESS);
+	await getDeployedD42Contract();
 
 	// Get initial balances of the two signers
-	await getBalances(d42Contract);
+	await getBalances();
 
 	/*
 	 * Connection test with Other (not supposed to succeed)
