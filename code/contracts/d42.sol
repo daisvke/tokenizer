@@ -108,7 +108,7 @@ contract d42 is ERC20, Ownable, Pausable {
      * @notice Override the transfer function to include the whenNotPaused modifier.
      */
     function transfer(address recipient, uint256 amount)
-        public onlyOwner override whenNotPaused returns (bool)
+        public onlyMultisig override whenNotPaused returns (bool)
     {
         // Calling the parent transfer function
         return super.transfer(recipient, amount);
@@ -132,7 +132,7 @@ contract d42 is ERC20, Ownable, Pausable {
      * @notice Override the transferFrom function to include the whenNotPaused modifier.
      */
     function transferFrom(address sender, address recipient, uint256 amount)
-        public onlyOwner override whenNotPaused returns (bool)
+        public onlyMultisig override whenNotPaused returns (bool)
     {
         // Calling the parent transferFrom function
         return super.transferFrom(sender, recipient, amount);
