@@ -47,6 +47,16 @@ https://sepolia.etherscan.io/token/<WALLET_ADDRESS>
 ```
 
 
+## Test Addresses
+
+### Address of deployed multisig smart contract
+`0x03A53ee8E248b59631b5B31614Ed20018B2C2b0a`
+### Address of deployed d42 smart contract
+`0x2bdD55d5c142B653D896a23CdAfa7f5Ba6A70781`
+### Wallet address of another account
+`0x167e418B331C313c47b677C9b93136F1150FD583`
+
+
 ## Documentation
 
 ### On how cryptocurrencies and blockchains work
