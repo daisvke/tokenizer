@@ -1,80 +1,76 @@
-# tokenizer
+# Tokenizer
 
 This project is designed to operate exclusively on a testnet, utilizing **Hardhat** as the development environment to facilitate the creation and testing of smart contracts. The **MultiSigWallet** contract allows for secure fund management through a multi-signature approval process, while the **d42** ERC20 token contract incorporates features like ownership management and pausable functionality.
-
 
 ## Technology Choices
 
 ### Using Sepolia Test Network
-- **Realistic Testing Environment**: Sepolia mimics the Ethereum mainnet, enabling realistic testing of smart contracts.
-- **Etherum mining**: We used <a href="https://sepolia-faucet.pk910.de/">this Sepolia faucet.</a>
-It's an easy way to get Sepolia tokens without having to create an account etc.
+- **Realistic Testing Environment**: Sepolia mimics the Ethereum mainnet, enabling realistic testing of smart contracts. This helps in identifying potential issues that may arise when deploying on the mainnet.
+- **Easy Token Acquisition**: We used [this Sepolia faucet](https://sepolia-faucet.pk910.de/) to obtain Sepolia tokens easily. It’s a straightforward way to get test Ether without needing to create an account.
+- **Growing Ecosystem**: As a newer test network, Sepolia is gaining traction among developers, leading to improved resources, community support, and documentation.
+
+| Feature                     | Sepolia                     | Rinkeby                     | Ropsten                     |
+|-----------------------------|-----------------------------|-----------------------------|-----------------------------|
+| **Mainnet Mimicry**         | High                        | Moderate                    | High                        |
+| **Faucet Accessibility**    | Easy                        | Moderate                    | Difficult                   |
+| **Network Congestion**      | Low                         | Moderate                    | High                        |
+| **Community Support**       | Growing                     | Established                 | Established                 |
 
 ### ERC20 Token Standard
-
 - **Widely Adopted Standard**: ERC20 is the most common token standard on Ethereum, making it easier to find resources and community support.
 - **Interoperability**: ERC20 tokens can be easily integrated with various wallets, exchanges, and dApps.
 - **Simplicity**: The ERC20 standard provides a clear interface for creating tokens, ideal for beginners.
 
 ### Hardhat Development Environment
-
 - **Local Development**: Hardhat provides a local Ethereum network for testing, making it easy to deploy and test smart contracts without incurring gas fees.
 - **Built-in Tools**: It includes features like Solidity debugging and testing frameworks.
 - **Community Support**: Hardhat has a strong community and extensive documentation.
 
+### Why Use Solidity?
+- **Industry Standard**: Solidity is the most commonly used language for Ethereum smart contracts, ensuring abundant resources and community support.
+- **Extensive Documentation**: The Solidity community offers extensive documentation and tutorials, making it easier for developers to learn and troubleshoot.
+- **Object-Oriented Programming**: Solidity supports object-oriented programming principles, allowing for the creation of complex contracts with reusable components.
+- **Rich Functionality**: The language includes features like inheritance, libraries, and user-defined types, enabling developers to build sophisticated applications.
+- **Interoperability**: Solidity is designed specifically for the Ethereum blockchain, ensuring that contracts can easily interact with other contracts and dApps within the ecosystem.
 
-## Useful commands
-```bash
-# For all the following commands, first go to the Node.js project folder
-cd code/
+This combination of using the Sepolia test network and Solidity as the programming language provides a solid foundation for building and deploying secure and efficient smart contracts.
 
-# Install/uninstall module
-npm install [--save-dev] module_name
-npm uninstall module_name
+The structure you've provided represents a typical layout for a blockchain project using Hardhat for smart contract development. Here's a breakdown of each component in the directory structure:
 
-# Publish sepolia smart contract on Etherscan.
-npx hardhat verify --network sepolia <CONTRACT_ADDRESS> 'Hello World!'
+---
 
-# Deploy the contract on the testnet
-npx hardhat run ../deployment/deploy.js
-
-# Run tests with the contract on the testnet
-npx hardhat run ../deployment/interact.js
-
-# Wallet information can be accessed from
-https://sepolia.etherscan.io/token/<WALLET_ADDRESS>
+## Project Structure Explanation
 
 ```
+├── code
+│   ├── contracts
+│   ├── hardhat.config.js
+│   ├── package.json
+│   └── package-lock.json
+├── deployment
+│   ├── deploy.js
+│   └── interact.js
+├── documentation
+└── README.md
+```
 
+### `code` Directory
+This is the main directory containing all the code and configuration files for the project.
 
-## Test Addresses
+- **`contracts`**: This subdirectory contains the Solidity smart contracts that define the logic and functionality of the decentralized application (dApp). Each contract is stored in its own file.
 
-### Address of deployed multisig smart contract
-`0x03A53ee8E248b59631b5B31614Ed20018B2C2b0a`
-### Address of deployed d42 smart contract
-`0x2bdD55d5c142B653D896a23CdAfa7f5Ba6A70781`
+- **`hardhat.config.js`**: This is the configuration file for Hardhat, where you can set up network configurations, compiler settings, and plugins. It allows you to customize the development environment according to your project's needs.
 
+- **`package.json`**: This file contains metadata about the project, including its name, version, description, and dependencies. It also defines scripts that can be run using npm, such as testing or deploying contracts.
 
-## Documentation
+- **`package-lock.json`**: This file is automatically generated when you install packages. It locks the versions of the dependencies to ensure that the same versions are used when the project is installed in different environments.
 
-### On how cryptocurrencies and blockchains work
-- https://github.com/bitcoinbook/bitcoinbook
-- https://www.imponderablethings.com/2013/07/how-bitcoin-works-under-hood.html
+### `deployment` Directory
+This directory contains scripts related to deploying and interacting with the smart contracts.
 
-### Smart contract tutorial
-- https://ethereum.org/fr/developers/tutorials/hello-world-smart-contract-fullstack/<br/>
-but change:
-	- georli to sepolia
-	- 'hardhat-etherscan' to 'hardhat-verify' (https://www.npmjs.com/package/@nomiclabs/hardhat-etherscan)
+- **`deploy.js`**: This script is responsible for deploying the smart contracts to the specified network. It includes the logic for compiling the contracts and sending them to the blockchain.
 
-### Other links
-- https://eips.ethereum.org/EIPS/eip-20#methods
-- https://metamask.io/download
-- https://developer.metamask.io/
-- https://support.infura.io/building-with-infura/javascript-typescript/infuraprovider-metamaskwalletprovider-react-ethersjs
-- https://docs.ethers.org/v5/
-- https://sepolia.etherscan.io/address/0x3cd47a0d60075b8d6e387449605a7d016b5ca6bd
-- https://support.infura.io/building-with-infura/javascript-typescript/infuraprovider-metamaskwalletprovider-react-ethersjs
-- https://docs.openzeppelin.com/contracts/5.x/erc20#constructing-an-erc20-token-contract
-- https://blockchainblog.substack.com/p/how-to-create-an-erc-20-token-with
-- https://medium.com/@marketing.blockchain/how-to-create-a-multisig-wallet-in-solidity-cfb759dbdb35
+- **`interact.js`**: This script allows you to interact with the deployed smart contracts. It may include functions for calling contract methods, sending transactions, or querying the blockchain for data.
+
+### `documentation` Directory
+This directory is intended for any additional documentation related to the project.

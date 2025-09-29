@@ -12,7 +12,6 @@ pragma solidity ^0.8.26;
 
 // Import OpenZeppelin ERC20 standard contract
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 // interface IMultiSig {
@@ -20,8 +19,8 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 // }
 
 // d42 contract
-contract d42 is ERC20, Ownable, Pausable {
-    address public  multisig; // Address of the multisig wallet
+contract d42 is ERC20, Pausable {
+    address public multisig; // Address of the multisig wallet
 
     /************************* Events *************************/
 
@@ -57,7 +56,6 @@ contract d42 is ERC20, Ownable, Pausable {
 
     constructor(uint256 initialSupply, address _multisig)
         ERC20("d42", "D42") // Initializing the ERC20 token with name and symbol
-        Ownable(msg.sender) // Setting the contract deployer as the owner
     {
         multisig = _multisig; // Setting the multisig address
 
